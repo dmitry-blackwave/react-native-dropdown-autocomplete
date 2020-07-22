@@ -26,7 +26,6 @@ class Autocomplete extends Component {
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleBlur = this.handleBlur.bind(this);
     this.promisifySetState = this.promisifySetState.bind(this);
-    this.clearInput = this.clearInput.bind(this);
   }
 
   handleInputChange(text) {
@@ -38,14 +37,14 @@ class Autocomplete extends Component {
     this.setState({inputValue: text});
     if (text.length > minimumCharactersCount) {
       this.setState(
-        {
-          loading: true,
-        },
-        () => {
-          if (this.mounted) {
-            this.timer = setTimeout(this.triggerChange, waitInterval);
-          }
-        },
+          {
+            loading: true,
+          },
+          () => {
+            if (this.mounted) {
+              this.timer = setTimeout(this.triggerChange, waitInterval);
+            }
+          },
       );
     } else {
       this.setState({loading: false});
@@ -54,8 +53,8 @@ class Autocomplete extends Component {
 
   promisifySetState(state) {
     return (
-      this.mounted &&
-      new Promise(resolve => this.setState(state, () => resolve()))
+        this.mounted &&
+        new Promise(resolve => this.setState(state, () => resolve()))
     );
   }
 
@@ -93,9 +92,9 @@ class Autocomplete extends Component {
     } else {
       const filteredItems = items.filter(item => {
         return (
-          valueExtractor(item)
-            .toLowerCase()
-            .search(inputValue.toLowerCase()) !== -1
+            valueExtractor(item)
+                .toLowerCase()
+                .search(inputValue.toLowerCase()) !== -1
         );
       });
 
@@ -118,19 +117,16 @@ class Autocomplete extends Component {
   }
 
   setItem(value) {
-    const {index, handleSelectItem, valueExtractor, resetOnSelect} = this.props;
+    const {index, handleSelectItem, valueExtractor, resetOnSelect, inputValueExtractor} = this.props;
     handleSelectItem(value, index);
 
     if (resetOnSelect) {
       this.setState({inputValue: ""});
     } else {
-      const capitalizedValue = capitalizeFirstLetter(valueExtractor(value));
+      const capitalizedValue = capitalizeFirstLetter(inputValueExtractor ? inputValueExtractor(value) : valueExtractor(value));
+      console.log('capitalizedValue', capitalizedValue);
       this.setState({inputValue: capitalizedValue});
     }
-  }
-
-  clearInput() {
-    this.setState({inputValue: ""});
   }
 
   componentDidMount() {
@@ -150,7 +146,7 @@ class Autocomplete extends Component {
     clearTimeout(this.timer);
     this.setState({loading: false});
     if (this.dropdown.current) {
-      this.dropdown.current.close();
+      //this.dropdown.current.close();
     }
   }
 
@@ -170,53 +166,51 @@ class Autocomplete extends Component {
       spinnerColor,
       placeholderColor,
       data,
-      disableFullscreenUI,
       ...dropdownProps
     } = this.props;
 
     return (
-      <Fragment>
-        <View style={[styles.inputContainerStyle, inputContainerStyle]}>
-          {renderIcon && renderIcon()}
-          <TextInput
-            ref={ref => {
-              this.container = ref;
-            }}
-            onBlur={event => this.handleBlur(event)}
-            style={[styles.input, inputStyle]}
-            placeholder={placeholder}
-            placeholderTextColor={placeholderColor || theme.textSecondary}
-            disableFullscreenUI={disableFullscreenUI}
-            value={inputValue}
-            autoCorrect={autoCorrect}
-            keyboardType={keyboardType}
-            onChangeText={text => this.handleInputChange(text)}
-            onFocus={event => {
-              if (scrollToInput) {
-                scrollToInput(findNodeHandle(event.target));
-              }
-            }}
-          />
-          {loading && (
-            <ActivityIndicator
-              style={[styles.spinner, spinnerStyle]}
-              size={spinnerSize}
-              color={spinnerColor || theme.primary}
+        <Fragment>
+          <View style={[styles.inputContainerStyle, inputContainerStyle]}>
+            {renderIcon && renderIcon()}
+            <TextInput
+                ref={ref => {
+                  this.container = ref;
+                }}
+                onBlur={event => this.handleBlur(event)}
+                style={[styles.input, inputStyle]}
+                placeholder={placeholder}
+                placeholderTextColor={placeholderColor || theme.textSecondary}
+                value={inputValue}
+                autoCorrect={autoCorrect}
+                keyboardType={keyboardType}
+                onChangeText={text => this.handleInputChange(text)}
+                onFocus={event => {
+                  if (scrollToInput) {
+                    scrollToInput(findNodeHandle(event.target));
+                  }
+                }}
             />
+            {loading && (
+                <ActivityIndicator
+                    style={[styles.spinner, spinnerStyle]}
+                    size={spinnerSize}
+                    color={spinnerColor || theme.primary}
+                />
+            )}
+          </View>
+          {items && items.length > 0 && (
+              <Dropdown
+                  ref={this.dropdown}
+                  dropdownPosition={0}
+                  data={data || items}
+                  listHeader={listHeader}
+                  inputValue={inputValue}
+                  onChangeValue={this.setItem}
+                  {...dropdownProps}
+              />
           )}
-        </View>
-        {items && items.length > 0 && (
-          <Dropdown
-            ref={this.dropdown}
-            dropdownPosition={0}
-            data={data ? filteredItems : items}
-            listHeader={listHeader}
-            inputValue={inputValue}
-            onChangeValue={this.setItem}
-            {...dropdownProps}
-          />
-        )}
-      </Fragment>
+        </Fragment>
     );
   }
 }

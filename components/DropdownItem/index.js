@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React, {PureComponent} from "react";
 import {Keyboard} from 'react-native';
-import { TouchableOpacity } from "react-native-gesture-handler";
+import {Button} from "react-native-material-buttons";
 import styles from "./DropdownItem.styles";
 import {theme} from "../../constants/Theme";
 
@@ -40,13 +40,13 @@ export default class DropdownItem extends PureComponent {
     const {children, style, ...props} = this.props;
 
     return (
-      <TouchableOpacity
-        {...props}
-        style={[styles.container, style]}
-        onPress={this.onPress}
-      >
-        {children}
-      </TouchableOpacity>
+        <Button
+            {...props}
+            style={[styles.container, style]}
+            onPress={this.onPress}
+        >
+          {children}
+        </Button>
     );
   }
 }

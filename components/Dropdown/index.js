@@ -53,9 +53,13 @@ export default class Dropdown extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const {value} = this.props;
+    const {value, data} = this.props;
     if (nextProps.value !== value) {
       this.setState({value: nextProps.value});
+    }
+
+    if (nextProps.data !== data) {
+      this.setState({data: nextProps.data, modal: true});
     }
   }
 
@@ -97,8 +101,8 @@ export default class Dropdown extends PureComponent {
     container.measureInWindow((x, y, containerWidth) => {
       const {opacity} = this.state;
       const delay = Math.max(
-        0,
-        rippleDuration - animationDuration - (Date.now() - timestamp),
+          0,
+          rippleDuration - animationDuration - (Date.now() - timestamp),
       );
       const selected = this.selectedIndex();
 
@@ -319,15 +323,15 @@ export default class Dropdown extends PureComponent {
     };
 
     return (
-      <Ripple
-        style={style}
-        rippleColor={rippleColor}
-        rippleDuration={rippleDuration}
-        rippleOpacity={rippleOpacity}
-        rippleCentered={rippleCentered}
-        rippleSequential={rippleSequential}
-        ref={this.updateRippleRef}
-      />
+        <Ripple
+            style={style}
+            rippleColor={rippleColor}
+            rippleDuration={rippleDuration}
+            rippleOpacity={rippleOpacity}
+            rippleCentered={rippleCentered}
+            rippleSequential={rippleSequential}
+            ref={this.updateRippleRef}
+        />
     );
   }
 
@@ -335,11 +339,11 @@ export default class Dropdown extends PureComponent {
     const {noDataText, noDataTextStyle} = this.props;
 
     return (
-      <DropdownItem index={0} style={{paddingLeft: 15}}>
-        <Text style={[styles.listItemText, styles.noData, noDataTextStyle]}>
-          {noDataText}
-        </Text>
-      </DropdownItem>
+        <DropdownItem index={0} style={{paddingLeft: 15}}>
+          <Text style={[styles.listItemText, styles.noData, noDataTextStyle]}>
+            {noDataText}
+          </Text>
+        </DropdownItem>
     );
   }
 
@@ -357,9 +361,9 @@ export default class Dropdown extends PureComponent {
     let text;
     if (highlightText) {
       text = highlightString(
-        String(valueExtractor(item)),
-        inputValue,
-        highLightColor || theme.primary,
+          String(valueExtractor(item)),
+          inputValue,
+          highLightColor || theme.primary,
       );
     } else {
       text = capitalizeFirstLetter(String(valueExtractor(item)));
@@ -398,39 +402,39 @@ export default class Dropdown extends PureComponent {
         paddingLeft: 15,
       },
       rightContent
-        ? {
+          ? {
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
           }
-        : {},
+          : {},
     ];
 
     return (
-      <DropdownItem index={index} {...props}>
-        <Text
-          style={[
-            styles.listItemText,
-            rightContent ? {maxWidth: 200} : {},
-            listItemTextStyle,
-          ]}
-          numberOfLines={1}
-          ellipsizeMode="tail"
-        >
-          {text}
-        </Text>
-        {rightContent && (
-          <View style={[styles.rightContent, rightContentStyle]}>
-            <Text
-              key={item.id}
-              style={[styles.rightContentItem, rightContentItemStyle]}
-            >
-              {rightTextExtractor(item)}
-            </Text>
-          </View>
-        )}
-      </DropdownItem>
+        <DropdownItem index={index} {...props}>
+          <Text
+              style={[
+                styles.listItemText,
+                rightContent ? {maxWidth: 200} : {},
+                listItemTextStyle,
+              ]}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+          >
+            {text}
+          </Text>
+          {rightContent && (
+              <View style={[styles.rightContent, rightContentStyle]}>
+                <Text
+                    key={item.id}
+                    style={[styles.rightContentItem, rightContentItemStyle]}
+                >
+                  {rightTextExtractor(item)}
+                </Text>
+              </View>
+          )}
+        </DropdownItem>
     );
   }
 
@@ -444,7 +448,7 @@ export default class Dropdown extends PureComponent {
     const {listFooterStyle} = this.props;
 
     return (
-      <View style={[styles.listItem, styles.listFooter, listFooterStyle]} />
+        <View style={[styles.listItem, styles.listFooter, listFooterStyle]} />
     );
   }
 
@@ -452,14 +456,14 @@ export default class Dropdown extends PureComponent {
     const {listHeader, listHeaderStyle, listHeaderTextStyle} = this.props;
 
     return listHeader ? (
-      <View style={[styles.listItem, styles.listHeader, listHeaderStyle]}>
-        <Text
-          style={[styles.listHeaderText, listHeaderTextStyle]}
-          key={listHeader}
-        >
-          {listHeader.toUpperCase()}
-        </Text>
-      </View>
+        <View style={[styles.listItem, styles.listHeader, listHeaderStyle]}>
+          <Text
+              style={[styles.listHeaderText, listHeaderTextStyle]}
+              key={listHeader}
+          >
+            {listHeader.toUpperCase()}
+          </Text>
+        </View>
     ) : null;
   }
 
@@ -493,24 +497,22 @@ export default class Dropdown extends PureComponent {
     const itemData = itemCount ? data : [NO_DATA];
 
     return (
-      <View onLayout={this.onLayout} style={containerStyle}>
-        {modal && (
-          <View style={[styles.picker, pickerStyle, pickerStyleOverrides]}>
-            <FlatList
-              keyboardShouldPersistTaps="always"
-              ref={this.updateScrollRef}
-              data={itemData}
-              style={[styles.scroll, scrollStyle]}
-              renderItem={this.renderItem}
-              keyExtractor={this.keyExtractor}
-              scrollEnabled={visibleItemCount <= itemCount}
-              ItemSeparatorComponent={this.renderSeparator}
-              ListFooterComponent={this.renderFooter}
-              ListHeaderComponent={this.renderHeader}
-            />
-          </View>
-        )}
-      </View>
+        <View onLayout={this.onLayout} style={containerStyle}>
+          {modal && (
+              <View style={[styles.picker, pickerStyleOverrides]}>
+                <FlatList
+                    keyboardShouldPersistTaps="always"
+                    ref={this.updateScrollRef}
+                    data={data || [NO_DATA]}
+                    style={[styles.scroll, scrollStyle]}
+                    renderItem={this.renderItem}
+                    keyExtractor={this.keyExtractor}
+                    scrollEnabled={visibleItemCount <= itemCount}
+                    ItemSeparatorComponent={this.renderSeparator}
+                />
+              </View>
+          )}
+        </View>
     );
   }
 }
@@ -526,7 +528,7 @@ Dropdown.propTypes = {
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 
   data: PropTypes.arrayOf(
-    PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
+      PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
   ),
 
   valueExtractor: PropTypes.func,
