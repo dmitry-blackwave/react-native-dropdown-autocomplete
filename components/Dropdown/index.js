@@ -204,7 +204,8 @@ export default class Dropdown extends PureComponent {
       onChangeValue(value);
     }
 
-    setTimeout(() => this.onClose(value), delay);
+    this.onClose(value);
+    //setTimeout(() => this.onClose(value), delay);
   }
 
   onLayout(event) {

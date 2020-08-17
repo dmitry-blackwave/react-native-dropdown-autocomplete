@@ -1,19 +1,19 @@
-import React, {Component, Fragment} from "react";
-import {findNodeHandle, ActivityIndicator, TextInput, View} from "react-native";
-import {string, bool, number, func} from "prop-types";
-import Dropdown from "../Dropdown";
-import {capitalizeFirstLetter} from "../../utils/string";
-import {styles} from "./Autocomplete.styles";
-import {get} from "../../utils/api";
-import {WAIT_INTERVAL, NO_DATA} from "../../constants/Autocomplete";
-import {theme} from "../../constants/Theme";
-import locales from "../../constants/Locales";
+import React, {Component, Fragment} from 'react';
+import {findNodeHandle, ActivityIndicator, TextInput, View} from 'react-native';
+import {string, bool, number, func} from 'prop-types';
+import Dropdown from '../Dropdown';
+import {capitalizeFirstLetter} from '../../utils/string';
+import {styles} from './Autocomplete.styles';
+import {get} from '../../utils/api';
+import {WAIT_INTERVAL, NO_DATA} from '../../constants/Autocomplete';
+import {theme} from '../../constants/Theme';
+import locales from '../../constants/Locales';
 
 class Autocomplete extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      inputValue: props.initialValue || "",
+      inputValue: props.initialValue || '',
       loading: false,
       filteredItems: [],
     };
@@ -121,7 +121,7 @@ class Autocomplete extends Component {
     handleSelectItem(value, index);
 
     if (resetOnSelect) {
-      this.setState({inputValue: ""});
+      this.setState({inputValue: ''});
     } else {
       const capitalizedValue = capitalizeFirstLetter(inputValueExtractor ? inputValueExtractor(value) : valueExtractor(value));
       console.log('capitalizedValue', capitalizedValue);
@@ -148,6 +148,10 @@ class Autocomplete extends Component {
     if (this.dropdown.current) {
       //this.dropdown.current.close();
     }
+  }
+
+  getData() {
+    return this.props.data || this.state.items;
   }
 
   render() {
@@ -199,11 +203,12 @@ class Autocomplete extends Component {
                 />
             )}
           </View>
-          {items && items.length > 0 && (
+
+          {this.getData() && this.getData().length > 0 && (
               <Dropdown
                   ref={this.dropdown}
                   dropdownPosition={0}
-                  data={data || items}
+                  data={this.getData()}
                   listHeader={listHeader}
                   inputValue={inputValue}
                   onChangeValue={this.setItem}
@@ -217,9 +222,9 @@ class Autocomplete extends Component {
 
 Autocomplete.defaultProps = {
   placeholder: locales.components.Autocomplete.placeholder,
-  spinnerSize: "small",
+  spinnerSize: 'small',
   autoCorrect: false,
-  keyboardType: "default",
+  keyboardType: 'default',
   minimumCharactersCount: 2,
   highlightText: true,
   waitInterval: WAIT_INTERVAL,
